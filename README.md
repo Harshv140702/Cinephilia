@@ -3,7 +3,8 @@ A project made for the purpose of software engineering lab during semeter 6.
 
 ## WORKFLOW
 
-![StateChart](https://user-images.githubusercontent.com/111780685/230788563-7093a07f-e282-4507-8e3d-e170552a7935.jpeg)
+![Untitled Diagram](https://user-images.githubusercontent.com/111780685/230801456-77954758-f039-4f45-bb60-835c89e4e9b1.jpg)
+
 
 
 
