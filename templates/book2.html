@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/bookingfinal.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Movie Seat Booking</title>
+  </head>
+  <body>
+    <p id="movie">Selected movie: {{movie}}</p>
+    <p>Seleted date: {{date}}</p>
+    <p>Seleted time: {{time}}</p> 
+    <div class="movie-container">
+        <!-- <label> Select a movie:</label> -->
+        <div id="movie">
+          </div>
+      </div>
+    <ul class="showcase">
+      <li>
+        <div class="seat"></div>
+        <small>Available</small>
+      </li>
+      <li>
+        <div class="seat selected"></div>
+        <small>Selected</small>
+      </li>
+      <li>
+        <div class="seat sold"></div>
+        <small>Sold</small>
+      </li>
+    </ul>
+    <div class="container">
+      <div class="screen"></div>
+
+      <div class="row">
+        <div class="seat" id="A1"></div>
+        <div class="seat" id="A2"></div>
+        <div class="seat" id="A3"></div>
+        <div class="seat" id="A4"></div>
+        <div class="seat" id="A5"></div>
+        <div class="seat" id="A6"></div>
+        <div class="seat" id="A7"></div>
+        <div class="seat" id="A8"></div>
+      </div>
+
+      <div class="row">
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat sold"></div>
+        <div class="seat sold"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+      </div>
+      <div class="row">
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat sold"></div>
+        <div class="seat sold"></div>
+      </div>
+      <div class="row">
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+      </div>
+      <div class="row">
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat sold"></div>
+        <div class="seat sold"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+      </div>
+      <div class="row">
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat"></div>
+        <div class="seat sold"></div>
+        <div class="seat sold"></div>
+        <div class="seat sold"></div>
+        <div class="seat"></div>
+      </div>
+    </div>
+
+    <p class="text">
+      You have selected <span id="count">0</span> seat 
+    </p>
+    <button class="btn" id="booker" href="/home">Book Now!</button>
+    <script>     
+    const container = document.querySelector(".container");
+const seats = document.querySelectorAll(".row .seat:not(.sold)");
+const count = document.getElementById("count");
+const total = document.getElementById("total");
+const movieSelect = document.getElementById("movie");
+
+populateUI();
+
+let ticketPrice = +movieSelect.value;
+
+// Save selected movie index and price
+function setMovieData(movieIndex, moviePrice) {
+  localStorage.setItem("selectedMovieIndex", movieIndex);
+  localStorage.setItem("selectedMoviePrice", moviePrice);
+}
+
+// Update total and count
+function updateSelectedCount() {
+  const selectedSeats = document.querySelectorAll(".row .seat.selected");
+
+  const seatsIndex = [...selectedSeats].map((seat) => [...seats].indexOf(seat));
+
+  localStorage.setItem("selectedSeats", JSON.stringify(seatsIndex));
+
+  const selectedSeatsCount = selectedSeats.length;
+
+  count.innerText = selectedSeatsCount;
+  total.innerText = selectedSeatsCount * ticketPrice;
+
+  setMovieData(movieSelect.selectedIndex, movieSelect.value);
+}
+
+
+// Get data from localstorage and populate UI
+function populateUI() {
+  const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats"));
+
+  if (selectedSeats !== null && selectedSeats.length > 0) {
+    seats.forEach((seat, index) => {
+      if (selectedSeats.indexOf(index) > -1) {
+        console.log(seat.classList.add("selected"));
+        console.log(selectedSeats)
+      }
+    });
+  }
+
+  const selectedMovieIndex = localStorage.getItem("selectedMovieIndex");
+
+  if (selectedMovieIndex !== null) {
+    movieSelect.selectedIndex = selectedMovieIndex;
+    console.log(selectedMovieIndex)
+  }
+}
+console.log(populateUI())
+// Movie select event
+movieSelect.addEventListener("change", (e) => {
+  ticketPrice = +e.target.value;
+  setMovieData(e.target.selectedIndex, e.target.value);
+  updateSelectedCount();
+});
+
+// Seat click event
+container.addEventListener("click", (e) => {
+  if (
+    e.target.classList.contains("seat") &&
+    !e.target.classList.contains("sold")
+  ) {
+    e.target.classList.toggle("selected");
+
+    updateSelectedCount();
+  }
+});
+
+// function myFunction() {
+// //   document.getElementById("demo").style.color = "red";
+// return selectedSeats;
+
+// on click function for the button with id btn.
+
+document.getElementById("booker").onclick = function() {
+    console.log("clicked");
+                    const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats"));
+                    var js_data = JSON.stringify(selectedSeats);
+                    $.ajax({                        
+                        url: '/book2/{{date}}/{{movie}}/{{time}}',
+                        type : 'post',
+                        contentType: 'application/json',
+                        dataType : 'json',
+                        data : js_data
+                    }).done(function() {
+                        console.log("yes");
+                        // $("#data").html(result);
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        console.log("fail: ",textStatus, errorThrown);
+                    });
+                    res.redirect('/home');
+}
+
+
+// Initial count and total set
+updateSelectedCount();
+ 
+    </script>
+  </body>
+</html>

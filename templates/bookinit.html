@@ -1,0 +1,17 @@
+<html>
+<link href="/static/booking.css" rel="stylesheet">   
+<body>
+    <form action="/booktickets" method="post">
+    <input type="date" id="date" name="date"
+    value="2023-04-03"
+    min="2023-04-03" max="2023-04-10">   
+    <label for="movie">Choose a movie:</label>
+    <select name="movie" id="movie">
+    {% for item in list %}
+        <option value="{{item}}">{{item}}</option>
+    {% endfor %}
+    </select>
+    <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<html>
+<link href="/static/booking.css" rel="stylesheet">
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+      <body>
+        <p>Selected movie: {{movie}}</p>
+        <p>Seleted date: {{date}}</p>
+        <label for="time">Choose a time:</label>   
+        <form action="/book/{{date}}/{{movie}}" method="post">
+        <select name="time" id="time">
+        {% for item in list %}
+            <option value="{{item}}">{{item}}</option>
+        {% endfor %}
+        </select> 
+        <button type="submit">Submit</button>
+        </form>
+      </body>
+    </html>
